@@ -1,5 +1,6 @@
 using API_RyDBodegaAutenticacion.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +11,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<RyDapibodegaAutenticacionContext>(
 
-o=>o.UseSqlServer(builder.Configuration.GetConnectionString("RyDAPIBodegaAutenticacionConnection"))
-    
+o=>o.UseSqlServer(builder.Configuration.GetConnectionString("RyDAPIBodegaAutenticacionConnection")) 
 );
+
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
 
 var app = builder.Build();
 
