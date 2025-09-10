@@ -2,6 +2,7 @@
 using API_RyDBodegaAutenticacion.Models;
 using API_RyDBodegaAutenticacion.Services.Usuario;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace API_RyDBodegaAutenticacion.Services.Usuarioo
 {
@@ -25,9 +26,11 @@ namespace API_RyDBodegaAutenticacion.Services.Usuarioo
             return await _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<UsuariosResponse>> GetUsuario()
+        public async Task<List<UsuariosResponse>> GetUsuario()
         {
-            throw new NotImplementedException();
+            var user = await _dbContext.Usuarios.ToListAsync();
+            var userList = _mapper.Map<List<API_RyDBodegaAutenticacion.Models.Usuario>, List<UsuariosResponse>>(user);
+            return userList;
         }
 
         public async Task<UsuariosResponse> GetUsuarioById(int id)
@@ -37,14 +40,30 @@ namespace API_RyDBodegaAutenticacion.Services.Usuarioo
             return userResponse;
         }
 
-        public Task<int> PostUsuario(UsuariosRequest usuario)
+        public async Task<int> PostUsuario(UsuariosRequest usuario)
         {
-            throw new NotImplementedException();
+           var entity = _mapper.Map<UsuariosRequest, API_RyDBodegaAutenticacion.Models.Usuario>(usuario);
+              await _dbContext.Usuarios.AddAsync(entity);
+            return await _dbContext.SaveChangesAsync();
         }
 
-        public Task<int> PutUsuario(UsuariosRequest usuario, int id)
+        public async Task<int> PutUsuario(UsuariosRequest usuario, int id)
         {
-            throw new NotImplementedException();
+            var entity = await _dbContext.Usuarios.FindAsync(id);
+            if (entity == null) 
+                return -1;
+
+            entity.NombreCompleto = usuario.NombreCompleto;
+            entity.CorreoElectronico = usuario.CorreoElectronico;
+            entity.Direccion = usuario.Direccion;
+            entity.Password = usuario.Password;
+            entity.Telefono = usuario.Telefono;
+            entity.Username = usuario.Username;
+            entity.IdRol = usuario.IdRol;
+            entity.Status = usuario.Status;
+
+            _dbContext.Usuarios.Update(entity);
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }
