@@ -1,9 +1,18 @@
+using API_RyDBodegaAutenticacion.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<RyDapibodegaAutenticacionContext>(
+
+o=>o.UseSqlServer(builder.Configuration.GetConnectionString("RyDAPIBodegaAutenticacionConnection"))
+    
+);
 
 var app = builder.Build();
 
@@ -35,6 +44,14 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+// Endpoint GET
+app.MapGet("/hola", () =>
+{
+    return Results.Ok("¡Hola, tu API está funcionando!");
+})
+.WithName("ObtenerSaludo")
+.WithTags("Ejemplo");
 
 app.Run();
 
