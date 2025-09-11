@@ -1,4 +1,8 @@
+using API_RyDBodegaAutenticacion.Endpoints;
 using API_RyDBodegaAutenticacion.Models;
+using API_RyDBodegaAutenticacion.Services.Rol;
+using API_RyDBodegaAutenticacion.Services.Usuario;
+using API_RyDBodegaAutenticacion.Services.Usuarioo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +20,9 @@ o=>o.UseSqlServer(builder.Configuration.GetConnectionString("RyDAPIBodegaAutenti
 
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies()));
 
+builder.Services.AddScoped<IRolServices, RolServices>();
+builder.Services.AddScoped<IUsuarioService, UsuariooService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,26 +34,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 // Endpoint GET
 app.MapGet("/hola", () =>
 {
@@ -55,9 +42,7 @@ app.MapGet("/hola", () =>
 .WithName("ObtenerSaludo")
 .WithTags("Ejemplo");
 
+app.UseEndpoints();
+
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

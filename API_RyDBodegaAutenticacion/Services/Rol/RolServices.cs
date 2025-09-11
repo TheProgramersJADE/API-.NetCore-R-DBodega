@@ -45,8 +45,9 @@ namespace API_RyDBodegaAutenticacion.Services.Rol
         {
             var rolRequest = _mapper.Map<RoleRequest, Role>(role);
             await _dbContext.Roles.AddAsync(rolRequest);
+            await _dbContext.SaveChangesAsync();
 
-            return await _dbContext.SaveChangesAsync();
+            return rolRequest.Id;
         }
 
         public async Task<int> PutRol(RoleRequest role, int id)

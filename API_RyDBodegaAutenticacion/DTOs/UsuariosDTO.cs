@@ -22,7 +22,6 @@ namespace API_RyDBodegaAutenticacion.DTOs
 
         public int Status { get; set; }
 
-        public virtual RoleResponse IdRolNavigation { get; set; } = null!;
     }
 
     public class UsuariosRequest
