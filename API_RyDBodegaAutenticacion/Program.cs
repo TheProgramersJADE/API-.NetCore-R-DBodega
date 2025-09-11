@@ -4,7 +4,10 @@ using API_RyDBodegaAutenticacion.Services.Rol;
 using API_RyDBodegaAutenticacion.Services.Usuario;
 using API_RyDBodegaAutenticacion.Services.Usuarioo;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using API_RyDBodegaAutenticacion.Services.Credenciales;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,33 @@ builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAss
 
 builder.Services.AddScoped<IRolServices, RolServices>();
 builder.Services.AddScoped<IUsuarioService, UsuariooService>();
+builder.Services.AddScoped<ICredencialesService, CredencialesService>();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings.GetValue<string>("SecretKey");
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(
+    options => { 
+    
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters { 
+        
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+            ValidAudience = jwtSettings.GetValue<string>("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
+    }
+    );
 
 var app = builder.Build();
 
@@ -41,6 +71,9 @@ app.MapGet("/hola", () =>
 })
 .WithName("ObtenerSaludo")
 .WithTags("Ejemplo");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints();
 
