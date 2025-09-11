@@ -4,6 +4,7 @@
     {
         public static void UseEndpoints(this WebApplication app) { 
             RolEndpoints.Add(app);
+            UsuarioEndpoints.Add(app);
         }
     }
 }
