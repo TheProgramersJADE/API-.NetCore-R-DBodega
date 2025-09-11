@@ -27,31 +27,31 @@ builder.Services.AddScoped<IRolServices, RolServices>();
 builder.Services.AddScoped<IUsuarioService, UsuariooService>();
 builder.Services.AddScoped<ICredencialesService, CredencialesService>();
 
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings.GetValue<string>("SecretKey");
+//var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+//var secretKey = jwtSettings.GetValue<string>("SecretKey");
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(
-    options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(
-    options => { 
+//builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication(
+//    options =>
+//    {
+//        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//    }).AddJwtBearer(
+//    options => { 
     
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters { 
+//        options.RequireHttpsMetadata = false;
+//        options.SaveToken = true;
+//        options.TokenValidationParameters = new TokenValidationParameters { 
         
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-            ValidAudience = jwtSettings.GetValue<string>("Audience"),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-        };
-    }
-    );
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+//            ValidAudience = jwtSettings.GetValue<string>("Audience"),
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+//        };
+//    }
+//    );
 
 var app = builder.Build();
 
@@ -72,8 +72,8 @@ app.MapGet("/hola", () =>
 .WithName("ObtenerSaludo")
 .WithTags("Ejemplo");
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseEndpoints();
 
