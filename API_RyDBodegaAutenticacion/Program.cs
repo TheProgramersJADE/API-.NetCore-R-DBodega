@@ -6,7 +6,6 @@ using API_RyDBodegaAutenticacion.Services.Usuarioo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using API_RyDBodegaAutenticacion.Services.Credenciales;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +24,6 @@ builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAss
 
 builder.Services.AddScoped<IRolServices, RolServices>();
 builder.Services.AddScoped<IUsuarioService, UsuariooService>();
-builder.Services.AddScoped<ICredencialesService, CredencialesService>();
 
 //var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 //var secretKey = jwtSettings.GetValue<string>("SecretKey");
