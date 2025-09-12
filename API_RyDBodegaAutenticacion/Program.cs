@@ -16,7 +16,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<RyDapibodegaAutenticacionContext>(
-
 o=>o.UseSqlServer(builder.Configuration.GetConnectionString("RyDAPIBodegaAutenticacionConnection")) 
 );
 
@@ -25,31 +24,31 @@ builder.Services.AddAutoMapper(cfg => cfg.AddMaps(AppDomain.CurrentDomain.GetAss
 builder.Services.AddScoped<IRolServices, RolServices>();
 builder.Services.AddScoped<IUsuarioService, UsuariooService>();
 
-//var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-//var secretKey = jwtSettings.GetValue<string>("SecretKey");
+var jwtSettings = builder.Configuration.GetSection("JwtSetting");
+var secretKey = jwtSettings.GetValue<string>("SecretKey");
 
-//builder.Services.AddAuthorization();
-//builder.Services.AddAuthentication(
-//    options =>
-//    {
-//        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//    }).AddJwtBearer(
-//    options => { 
-    
-//        options.RequireHttpsMetadata = false;
-//        options.SaveToken = true;
-//        options.TokenValidationParameters = new TokenValidationParameters { 
-        
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-//            ValidAudience = jwtSettings.GetValue<string>("Audience"),
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
-//        };
-//    }
-//    );
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(
+            options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+                ValidAudience = jwtSettings.GetValue<string>("Audience"),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+            };
+            }
+    );
 
 var app = builder.Build();
 
@@ -70,8 +69,8 @@ app.MapGet("/hola", () =>
 .WithName("ObtenerSaludo")
 .WithTags("Ejemplo");
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints();
 
