@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_RyDBodegaAutenticacion.Services.Usuarioo
 {
-    public class UsuariooService : IUsuarioService // Fixed missing colon to implement the interface
+    public class UsuariooService : IUsuarioService
     {
+
         private readonly RyDapibodegaAutenticacionContext _dbContext;
         private readonly IMapper _mapper;
 
@@ -17,13 +18,15 @@ namespace API_RyDBodegaAutenticacion.Services.Usuarioo
             _mapper = mapper;
         }
 
+
         public async Task<int> DeleteUsuario(int id)
         {
             var user = await _dbContext.Usuarios.FindAsync(id);
-            if (user == null) 
+            if (user == null)
                 return -1;
             _dbContext.Usuarios.Remove(user);
             return await _dbContext.SaveChangesAsync();
+
         }
 
         public async Task<List<UsuariosResponse>> GetUsuario()
@@ -42,26 +45,29 @@ namespace API_RyDBodegaAutenticacion.Services.Usuarioo
 
         public async Task<CredencialesResponse> Login(CredencialesRequest credenciales)
         {
-           var user = await _dbContext.Usuarios
+            var user = await _dbContext.Usuarios
                 .FirstOrDefaultAsync(
-               u => u.Username == credenciales.Username 
-               && u.Password == credenciales.Password);
-           
-            var credencialesresponse = _mapper.Map<API_RyDBodegaAutenticacion.Models.Usuario, CredencialesResponse>(user);
-            return credencialesresponse;
+                    u => u.Username == credenciales.Username
+                    && u.Password == credenciales.Password);
+
+            if (user == null)
+                return null;
+
+            var userResponse = _mapper.Map<API_RyDBodegaAutenticacion.Models.Usuario, CredencialesResponse>(user);
+            return userResponse;
         }
 
         public async Task<int> PostUsuario(UsuariosRequest usuario)
         {
-           var entity = _mapper.Map<UsuariosRequest, API_RyDBodegaAutenticacion.Models.Usuario>(usuario);
-              await _dbContext.Usuarios.AddAsync(entity);
+            var entity = _mapper.Map<UsuariosRequest, API_RyDBodegaAutenticacion.Models.Usuario>(usuario);
+            await _dbContext.Usuarios.AddAsync(entity);
             return await _dbContext.SaveChangesAsync();
         }
 
         public async Task<int> PutUsuario(UsuariosRequest usuario, int id)
         {
             var entity = await _dbContext.Usuarios.FindAsync(id);
-            if (entity == null) 
+            if (entity == null)
                 return -1;
 
             entity.NombreCompleto = usuario.NombreCompleto;
