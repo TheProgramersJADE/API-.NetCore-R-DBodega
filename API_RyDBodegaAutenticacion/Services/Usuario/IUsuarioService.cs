@@ -9,5 +9,6 @@ namespace API_RyDBodegaAutenticacion.Services.Usuario
         Task<UsuariosResponse> GetUsuarioById(int id);
         Task<int> PutUsuario(UsuariosRequest usuario, int id);
         Task<int> DeleteUsuario(int id);
+        Task<UsuariosResponse> Login(CredencialesRequest credenciales);
     }
 }

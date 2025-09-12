@@ -40,6 +40,17 @@ namespace API_RyDBodegaAutenticacion.Services.Usuarioo
             return userResponse;
         }
 
+        public async Task<CredencialesResponse> Login(CredencialesRequest credenciales)
+        {
+           var user = await _dbContext.Usuarios
+                .FirstOrDefaultAsync(
+               u => u.Username == credenciales.Username 
+               && u.Password == credenciales.Password);
+           
+            var credencialesresponse = _mapper.Map<API_RyDBodegaAutenticacion.Models.Usuario, CredencialesResponse>(user);
+            return credencialesresponse;
+        }
+
         public async Task<int> PostUsuario(UsuariosRequest usuario)
         {
            var entity = _mapper.Map<UsuariosRequest, API_RyDBodegaAutenticacion.Models.Usuario>(usuario);
