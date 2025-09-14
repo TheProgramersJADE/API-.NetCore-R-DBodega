@@ -20,7 +20,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener todos los roles",
                 Description = "Muestra una lista de roles"
-            });
+            }).RequireAuthorization();
 
 
             group.MapGet("/{id}", async (int id, IRolServices rolServices) =>
@@ -36,7 +36,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener un rol por ID",
                 Description = "Muestra un rol específico según su ID"
-            });
+            }).RequireAuthorization();
 
 
             group.MapPost("/", async (RoleRequest role, IRolServices rolServices) =>
@@ -53,7 +53,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Crear un nuevo rol",
                 Description = "Agrega un nuevo rol a la base de datos"
-            });
+            }).RequireAuthorization();
 
 
             group.MapPut("/{id}", async (int id, RoleRequest role, IRolServices rolServices) =>
@@ -70,7 +70,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Modificar rol",
                 Description = "Actualiza un rol existente"
-            });
+            }).RequireAuthorization();
         }
     }
 }

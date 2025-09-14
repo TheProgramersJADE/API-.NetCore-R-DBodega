@@ -24,7 +24,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener todos los usuarios",
                 Description = "Muestra una lista de usuarios"
-            });
+            }).RequireAuthorization();
 
             group.MapGet("/{id}", async (int id, IUsuarioService usuarioService) =>
             {
@@ -39,7 +39,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener un usuario por ID",
                 Description = "Muestra un usuario específico según su ID"
-            });
+            }).RequireAuthorization();
 
             group.MapPost("/", async (UsuariosRequest user, IUsuarioService usuarioService) =>
             {
@@ -55,7 +55,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Crear un nuevo usuario",
                 Description = "Agrega un nuevo usuario a la base de datos"
-            });
+            }).RequireAuthorization();
 
 
             group.MapPut("/{id}", async (int id, UsuariosRequest user, IUsuarioService usuarioService) =>
@@ -72,7 +72,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Modificar usuario",
                 Description = "Actualiza un usuario existente"
-            });
+            }).RequireAuthorization();
 
             group.MapDelete("/{id}", async (int id, IUsuarioService usuarioService) =>
             {
@@ -87,7 +87,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Eliminar usuario",
                 Description = "Elimina un usuario existente"
-            });
+            }).RequireAuthorization();
 
 
             group.MapPost("/login", async (CredencialesRequest credenciales, IUsuarioService usuarioService, IConfiguration config) =>
@@ -97,7 +97,8 @@ namespace API_RyDBodegaAutenticacion.Endpoints
                 if (login is null)
                     //codigo 401 Unauthorized "No autorizado"
                     return Results.Unauthorized();
-                else {
+                else
+                {
                     var jwtSettings = config.GetSection("JwtSetting");
                     var secretKey = jwtSettings.GetValue<string>("SecretKey");
                     var issuer = jwtSettings.GetValue<string>("Issuer");
@@ -106,16 +107,26 @@ namespace API_RyDBodegaAutenticacion.Endpoints
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var key = Encoding.UTF8.GetBytes(secretKey);
 
+                    var roleName = login.IdRol switch
+                    {
+                        1 => "Administrador",
+                        2 => "SupervisorBodega",
+                        _ => "usuario" // Por defecto, si el ID no se reconoce
+                    };
+
                     var tokenDescriptor = new SecurityTokenDescriptor
                     {
                         Subject = new ClaimsIdentity(new[]
                        {
-                            new Claim(ClaimTypes.Name, credenciales.Username)
+                            new Claim(ClaimTypes.Name, credenciales.Username),
+                            new Claim(ClaimTypes.Role, roleName),
+                             // Opcional: También puedes agregar el RoleId si lo necesitas
+                             new Claim("rolid", login.IdRol.ToString())
                        }),
-                       Expires = DateTime.UtcNow.AddHours(1),
-                       Issuer = issuer,
-                       Audience = audience,
-                       SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                        Expires = DateTime.UtcNow.AddHours(8),
+                        Issuer = issuer,
+                        Audience = audience,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                     };
 
                     //Crear el token usando aparámetros definidos
