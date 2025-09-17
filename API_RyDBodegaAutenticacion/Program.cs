@@ -11,7 +11,19 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ------------------ Configurar CORS ------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowGateway", policy =>
+        policy.WithOrigins("https://fuzzy-meme-x5x5xj9pjjwwf99vr-3002.app.github.dev") // URL de tu API Gateway
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // Add services to the container.
+builder.Services.AddControllers();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -86,6 +98,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ¡CORS antes de Authentication/Authorization!
+app.UseCors("AllowGateway");
 
 app.UseAuthentication();
 app.UseAuthorization();
