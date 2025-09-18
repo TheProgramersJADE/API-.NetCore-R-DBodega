@@ -1,6 +1,7 @@
 ﻿using API_RyDBodegaAutenticacion.DTOs;
 using API_RyDBodegaAutenticacion.Services.Rol;
 using API_RyDBodegaAutenticacion.Services.Usuario;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +25,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener todos los usuarios",
                 Description = "Muestra una lista de usuarios"
-            }).RequireAuthorization();
+            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
 
             group.MapGet("/{id}", async (int id, IUsuarioService usuarioService) =>
             {
@@ -39,7 +40,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Obtener un usuario por ID",
                 Description = "Muestra un usuario específico según su ID"
-            }).RequireAuthorization();
+            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
 
             group.MapPost("/", async (UsuariosRequest user, IUsuarioService usuarioService) =>
             {
@@ -55,7 +56,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Crear un nuevo usuario",
                 Description = "Agrega un nuevo usuario a la base de datos"
-            }).RequireAuthorization();
+            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
 
 
             group.MapPut("/{id}", async (int id, UsuariosRequest user, IUsuarioService usuarioService) =>
@@ -72,7 +73,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Modificar usuario",
                 Description = "Actualiza un usuario existente"
-            }).RequireAuthorization();
+            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
 
             group.MapDelete("/{id}", async (int id, IUsuarioService usuarioService) =>
             {
@@ -87,7 +88,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Eliminar usuario",
                 Description = "Elimina un usuario existente"
-            }).RequireAuthorization();
+            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
 
 
             group.MapPost("/login", async (CredencialesRequest credenciales, IUsuarioService usuarioService, IConfiguration config) =>
