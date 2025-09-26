@@ -56,7 +56,7 @@ namespace API_RyDBodegaAutenticacion.Endpoints
             {
                 Summary = "Crear un nuevo usuario",
                 Description = "Agrega un nuevo usuario a la base de datos"
-            }).RequireAuthorization(new AuthorizeAttribute { Roles = "Administrador" });
+            });
 
 
             group.MapPut("/{id}", async (int id, UsuariosRequest user, IUsuarioService usuarioService) =>
